@@ -72,12 +72,7 @@ app.get('/kalkulator_cijene_parkinga', (req, res) => {
 });
 
 
-app.get('/rezervacija_parkinga/user/:username', (req, res) => {
-    
-    let username = req.params.username;
-    console.log('Tražene su rezervacije samo za ', username);
-    res.json(storage.rezervacije_parkinga.filter((x)=> x.prezime_korisnika == username));
-});
+
 
 
 app.listen(port, () => console.log(`\n\n[DONE] Backend se vrti na http://localhost:${port}/\n\n`));
