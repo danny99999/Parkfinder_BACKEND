@@ -1,41 +1,22 @@
 {
-  "name": "testiranje",
-  "version": "0.1.0",
-  "private": true,
+  "name": "instaclone-back",
+  "version": "1.0.0",
+  "description": "Instaclone backend",
+  "main": "src/index.js",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "serve": "nodemon --exec babel-node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "@codekraft-studio/vue-animated": "^0.1.5",
-    "bootstrap": "^4.6.0",
-    "bootstrap-vue": "^2.21.2",
-    "core-js": "^3.8.3",
-    "firebase": "^8.3.1",
-    "store": "^2.0.12",
-    "vee-validate": "^4.2.3",
-    "vue": "^2.6.12",
-    "vue-router": "^3.5.1",
-    "vue-simple-password-meter": "0.0.24",
-    "vuelidate": "^0.7.6",
-    "vuex": "^3.6.2",
-    "zxcvbn": "^4.4.2"
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.11",
-    "@vue/cli-plugin-eslint": "^4.5.11",
-    "@vue/cli-plugin-router": "^4.5.11",
-    "@vue/cli-service": "^4.5.11",
-    "@vue/eslint-config-prettier": "^6.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-vue": "^6.2.2",
-    "prettier": "^1.19.1",
-    "sass": "^1.32.6",
-    "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11",
-    "vuejs-form": "^1.2.9"
+    "@babel/core": "^7.13.15",
+    "@babel/node": "^7.13.13",
+    "@babel/preset-env": "^7.13.15",
+    "nodemon": "^2.0.7"
   }
 }
