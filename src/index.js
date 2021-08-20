@@ -10,10 +10,11 @@ const port = 3200; // port na kojem će web server slušati
 
 app.use(cors());
 app.use(express.json());
+app.get('/', (req, res)=> res.send("Hello World, ovaj put preko browsera!"));
 
 app.get('/', (req, res) => {
     
-    res.json({});
+   res.json({});
 });
 // Za zaprimanje rezervacije parkirnog mjesta sa frontenda.
 app.post('/osobni_podaci', (req, res) => {
