@@ -16,7 +16,7 @@ export default () => {
         }
         client.connect(err => {
             if (err) {
-                reject("Doslo je so greske prilikom spajanja: " + err)
+                reject("Doslo je do greske prilikom spajanja: " + err)
             }
             else {
                 console.log("Uspjesno spajanje na bazu")

@@ -18,21 +18,19 @@ app.get('/', (req, res) => {
 });
 // Za zaprimanje rezervacije parkirnog mjesta sa frontenda.
 app.post('/osobni_podaci', (req, res) => {
-    let doc= req.body;
-
-    storage.osobni_podaci.push(doc);
-
+    let poruka= req.body;
+    console.log(poruka)
+    storage.osobni_podaci.push(poruka);
     
-    res.json({status: 'OK'});
+    res.json("OK");
 });
 
 app.post('/podaci_vozila', (req, res) => {
-    let doc= req.body;
-
-    storage.podaci_vozila.push(doc);
-
-    
-    res.json({status: 'OK'});
+    let poruka= req.body;
+    console.log(poruka)
+    storage.podaci_vozila.push(poruka)
+ 
+    res.json("OK");
 });
 
 app.post('/podaci_rezervacije', (req, res) => {
@@ -58,8 +56,9 @@ app.post('/kalkulator_cijene_parkinga', (req, res) => {
 
 app.get('/osobni_podaci', async (req, res)=> {
     let db= await connect()
-    let cursor = await db.collection("Parkfinder").find().sort({id_korisnika})
+    let cursor = await db.collection("osobni_podaci").find()
     let results = await cursor.toArray()
+  
     res.json(results)
     console.log(results)
 })
