@@ -61,7 +61,16 @@ app.get('/osobni_podaci', async (req, res)=> {
   
     res.json(results)
     console.log(results)
-})
+});
+app.get('/kartice', async (req, res)=> {
+    let db= await connect()
+    let cursor = await db.collection("kartice").find()
+    let results = await cursor.toArray()
+  
+    res.json(results)
+    console.log(results)
+});
+
 
 app.get('/osobni_podaci_memory', (req, res) => {
     
