@@ -13,6 +13,8 @@ app.use(express.json());
 app.get('/', (req, res)=> res.send("Hello World, ovaj put preko browsera!"));
 
 app.get('/', (req, res) => {
+    let naslov = req.query.naslov
+    console.log("Pretraga:", naslov)
     
    res.json({});
 });
