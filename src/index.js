@@ -66,7 +66,15 @@ app.get('/osobni_podaci', async (req, res)=> {
 });
 app.get('/kartice', async (req, res)=> {
     let db= await connect()
-    let cursor = await db.collection("kartice").find()
+    let query = req.query;
+    let selekcija = {}
+
+    if(query.naslov_b) {
+        selekcija.naslov_b= new RegExp (query.naslov_b)
+    }
+
+    console.log("Selekcija", selekcija) 
+    let cursor = await db.collection("kartice").find(selekcija) 
     let results = await cursor.toArray()
   
     res.json(results)
