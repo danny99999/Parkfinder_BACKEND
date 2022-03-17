@@ -19,12 +19,33 @@ app.get('/', (req, res) => {
    res.json({});
 });
 // Za zaprimanje rezervacije parkirnog mjesta sa frontenda.
-app.post('/osobni_podaci', (req, res) => {
-    let poruka= req.body;
-    console.log(poruka)
-    storage.osobni_podaci.push(poruka);
+app.post('/osobni_podaci', async (req, res) => {
+    let doc= req.body;
     
-    res.json("OK");
+    // Datum/dan kad je poslan upit na bazu?
+    doc.postedAt = new Date().getTime();
+
+    delete doc._id;
+
+    if (!doc.ime_korisnika || !doc.prezime_korisnika || !doc.br_telefona){
+        res.json({
+            status: 'fail',
+            reason: 'incomplete'
+        })
+        return;
+    };
+
+    let db = await connect();
+    let result = await db.collection("osobni_podaci").insertOne(doc)
+
+    if (result && result.insertedCount == 1){
+        res.json(result.ops[0]);
+    }   
+    else {
+        res.json({
+            status: 'fail',
+        })
+    };
 });
 
 app.post('/podaci_vozila', (req, res) => {
@@ -35,13 +56,33 @@ app.post('/podaci_vozila', (req, res) => {
     res.json("OK");
 });
 
-app.post('/podaci_rezervacije', (req, res) => {
-    let doc= req.body;
-
-    storage.podaci_rezervacije.push(doc);
-
+app.post('/podaci_rezervacije', async (req, res) => {
+    /*let doc= req.body;
     
-    res.json({status: 'OK'});
+    // Datum/dan kad je poslan upit na bazu?
+    doc.postedAt = new Date().getTime();
+
+    delete doc._id;
+
+    /*if (!doc.datum_rezervacije || !doc.vrijeme_boravka || !doc.koji_parking){
+        res.json({
+            status: 'fail',
+            reason: 'incomplete'
+        })
+        return;
+    } 
+
+    let db = await connect();
+    let result = await db.collection("podaci_rezervacije").insertOne(doc)
+
+    if (result && result.insertedCount == 1){
+        res.json(result.ops[0]);
+    }   
+    else {
+        res.json({
+            status: 'fail',
+        })
+    };*/
 });
 
 app.post('/kalkulator_cijene_parkinga', (req, res) => {
@@ -65,12 +106,13 @@ app.get('/osobni_podaci', async (req, res)=> {
     console.log(results)
 });
 app.get('/kartice', async (req, res)=> {
-    let db= await connect()
+    let db = await connect()
     let query = req.query;
     let selekcija = {}
+    var string = query.naslov_b
 
-    if(query.naslov_b) {
-        selekcija.naslov_b= new RegExp (query.naslov_b)
+    if (string) {
+        selekcija.naslov_b = new RegExp (string, 'i')
     }
 
     console.log("Selekcija", selekcija) 
