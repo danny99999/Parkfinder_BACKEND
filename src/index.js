@@ -18,11 +18,15 @@ app.get('/', (req, res) => {
     
    res.json({});
 });
-// Za zaprimanje rezervacije parkirnog mjesta sa frontenda.
+
+
+// Za zaprimanje rezervacije parkirnog mjesta sa frontenda
+
+//Podaci vozača
 app.post('/osobni_podaci', async (req, res) => {
-    let doc= req.body;
+    let doc = req.body;
     
-    // Datum/dan kad je poslan upit na bazu?
+    // Datum/dan kad je poslan upit na bazu
     doc.postedAt = new Date().getTime();
 
     delete doc._id;
@@ -48,23 +52,46 @@ app.post('/osobni_podaci', async (req, res) => {
     };
 });
 
-app.post('/podaci_vozila', (req, res) => {
-    let poruka= req.body;
-    console.log(poruka)
-    storage.podaci_vozila.push(poruka)
- 
-    res.json("OK");
-});
-
-app.post('/podaci_rezervacije', async (req, res) => {
-    /*let doc= req.body;
+//Podaci o vozilu
+app.post('/podaci_vozila', async (req, res) => {
+    let doc = req.body;
     
-    // Datum/dan kad je poslan upit na bazu?
+    // Datum/dan kad je poslan upit na bazu
     doc.postedAt = new Date().getTime();
 
     delete doc._id;
 
-    /*if (!doc.datum_rezervacije || !doc.vrijeme_boravka || !doc.koji_parking){
+    if (!doc.naziv_vozila || !doc.boja_vozila || !doc.registracija){
+        res.json({
+            status: 'fail',
+            reason: 'incomplete'
+        })
+        return;
+    }; 
+
+    let db = await connect();
+    let result = await db.collection("podaci_vozila").insertOne(doc)
+
+    if (result && result.insertedCount == 1){
+        res.json(result.ops[0]);
+    }   
+    else {
+        res.json({
+            status: 'fail',
+        })
+    };
+});
+
+//Podaci o rezervaciji
+app.post('/podaci_rezervacije', async (req, res) => {
+    let doc = req.body;
+    
+    // Datum/dan kad je poslan upit na bazu
+    doc.postedAt = new Date().getTime();
+
+    delete doc._id;
+
+    if (!doc.Izabrani_datum || !doc.Vrijeme_boravka || !doc.Koji_parking){
         res.json({
             status: 'fail',
             reason: 'incomplete'
@@ -82,29 +109,39 @@ app.post('/podaci_rezervacije', async (req, res) => {
         res.json({
             status: 'fail',
         })
-    };*/
-});
-
-app.post('/kalkulator_cijene_parkinga', (req, res) => {
-    let doc= req.body;
-
-    storage.kalkulator_cijene_parkinga.push(doc);
-
-    
-    res.json({status: 'OK'});
+    };
 });
 
 
 // Za listanje svih rezervacija parkirnih mjesta iz administracije.
 
 app.get('/osobni_podaci', async (req, res)=> {
-    let db= await connect()
+    let db = await connect()
     let cursor = await db.collection("osobni_podaci").find()
     let results = await cursor.toArray()
   
     res.json(results)
     console.log(results)
 });
+
+app.get('/podaci_vozila', async (req, res) => {
+    let db = await connect()
+    let cursor = await db.collection("podaci_vozila").find()
+    let results = await cursor.toArray()
+  
+    res.json(results)
+    console.log(results)
+});
+
+app.get('/podaci_rezervacije', async (req, res) => {
+    let db = await connect()
+    let cursor = await db.collection("podaci_rezervacije").find()
+    let results = await cursor.toArray()
+  
+    res.json(results)
+    console.log(results)
+});
+
 app.get('/kartice', async (req, res)=> {
     let db = await connect()
     let query = req.query;
@@ -122,30 +159,6 @@ app.get('/kartice', async (req, res)=> {
     res.json(results)
     console.log(results)
 });
-
-
-app.get('/osobni_podaci_memory', (req, res) => {
-    
-    res.json(storage.osobni_podaci);
-});
-
-app.get('/podaci_vozila_memory', (req, res) => {
-    
-    res.json(storage.podaci_vozila);
-});
-
-app.get('/podaci_rezervacije_memory', (req, res) => {
-    
-    res.json(storage.podaci_rezervacije);
-});
-
-app.get('/kalkulator_cijene_parkinga_memory', (req, res) => {
-    
-    res.json(storage.kalkulator_cijene_parkinga);
-});
-
-
-
 
 
 app.listen(port, () => console.log(`\n\n[DONE] Backend se vrti na http://localhost:${port}/\n\n`));
