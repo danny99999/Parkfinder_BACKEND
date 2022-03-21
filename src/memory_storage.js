@@ -1,6 +1,7 @@
 // Datoteka: src/memory_storage.js
 
 let storage = {
+
     osobni_podaci: [
         {
             id_korisnika: 10001,

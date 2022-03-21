@@ -2,6 +2,7 @@ import express from 'express';
 import storage from './memory_storage.js';
 import cors from 'cors';
 import connect from './db.js'
+import auth from './auth.js';
 
 
 const app = express(); // instanciranje aplikacije
@@ -23,6 +24,19 @@ app.get('/', (req, res) => {
 // Za zaprimanje rezervacije parkirnog mjesta sa frontenda
 
 //Podaci vozača
+
+app.post("/users", async (req, res)=> {
+    let user = req.body;
+    let id;
+    try {
+        id =  await auth.registerUser(user);
+    }
+    catch (e) {
+        res.status(500).json({error: e.message})
+    }
+    res.json({id: id});
+});
+
 app.post('/osobni_podaci', async (req, res) => {
     let doc = req.body;
     
