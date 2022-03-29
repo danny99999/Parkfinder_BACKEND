@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import storage from './memory_storage.js';
 import cors from 'cors';
@@ -10,7 +13,7 @@ const port = 3200; // port na kojem će web server slušati
 
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); //autom. dekodiranje JSON poruka
 app.get('/', (req, res)=> res.send("Hello World, ovaj put preko browsera!"));
 
 app.get('/', (req, res) => {
@@ -20,12 +23,23 @@ app.get('/', (req, res) => {
    res.json({});
 });
 
+app.get("/tajna", [auth.verify], (req, res) => {
+    res.json({message: "Ovo je tajna " + req.jwt.korisnicko_ime})
+});
 
-// Za zaprimanje rezervacije parkirnog mjesta sa frontenda
+app.post('/auth', async (req, res) => {
+    let user = req.body;
 
-//Podaci vozača
+    try {
+        let result = await auth.authenticateUser(user.korisnicko_ime, user.lozinka);
+        res.json(result);
+    }
+    catch(e) {
+        res.status(403).json({ error: e.message});
+    }
+});
 
-app.post("/users", async (req, res)=> {
+app.post('/users', async (req, res)=> {
     let user = req.body;
     let id;
     try {
@@ -36,6 +50,10 @@ app.post("/users", async (req, res)=> {
     }
     res.json({id: id});
 });
+
+// Za zaprimanje rezervacije parkirnog mjesta sa frontenda
+
+//Podaci vozača
 
 app.post('/osobni_podaci', async (req, res) => {
     let doc = req.body;
