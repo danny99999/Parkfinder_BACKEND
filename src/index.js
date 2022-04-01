@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
-import storage from './memory_storage.js';
 import cors from 'cors';
 import connect from './db.js'
 import auth from './auth.js';
@@ -23,7 +22,7 @@ app.get('/', (req, res) => {
    res.json({});
 });
 
-app.get("/tajna", [auth.verify], (req, res) => {
+app.get("/tajna", /*[auth.verify], */ (req, res) => {
     res.json({message: "Ovo je tajna " + req.jwt.korisnicko_ime})
 });
 
@@ -55,7 +54,7 @@ app.post('/users', async (req, res)=> {
 
 //Podaci vozača
 
-app.post('/osobni_podaci', async (req, res) => {
+app.post('/osobni_podaci', /*[auth.verify], */ async (req, res) => {
     let doc = req.body;
     
     // Datum/dan kad je poslan upit na bazu
@@ -85,7 +84,7 @@ app.post('/osobni_podaci', async (req, res) => {
 });
 
 //Podaci o vozilu
-app.post('/podaci_vozila', async (req, res) => {
+app.post('/podaci_vozila', /*[auth.verify], */ async (req, res) => {
     let doc = req.body;
     
     // Datum/dan kad je poslan upit na bazu
@@ -115,7 +114,7 @@ app.post('/podaci_vozila', async (req, res) => {
 });
 
 //Podaci o rezervaciji
-app.post('/podaci_rezervacije', async (req, res) => {
+app.post('/podaci_rezervacije', /*[auth.verify], */ async (req, res) => {
     let doc = req.body;
     
     // Datum/dan kad je poslan upit na bazu
@@ -147,7 +146,7 @@ app.post('/podaci_rezervacije', async (req, res) => {
 
 // Za listanje svih rezervacija parkirnih mjesta iz administracije.
 
-app.get('/osobni_podaci', async (req, res)=> {
+app.get('/osobni_podaci', /*[auth.verify] ,*/ async (req, res)=> {
     let db = await connect()
     let cursor = await db.collection("osobni_podaci").find()
     let results = await cursor.toArray()
@@ -156,7 +155,7 @@ app.get('/osobni_podaci', async (req, res)=> {
     console.log(results)
 });
 
-app.get('/podaci_vozila', async (req, res) => {
+app.get('/podaci_vozila', /*[auth.verify],*/ async (req, res) => {
     let db = await connect()
     let cursor = await db.collection("podaci_vozila").find()
     let results = await cursor.toArray()
@@ -165,7 +164,7 @@ app.get('/podaci_vozila', async (req, res) => {
     console.log(results)
 });
 
-app.get('/podaci_rezervacije', async (req, res) => {
+app.get('/podaci_rezervacije', /*[auth.verify], */ async (req, res) => {
     let db = await connect()
     let cursor = await db.collection("podaci_rezervacije").find()
     let results = await cursor.toArray()
@@ -174,7 +173,7 @@ app.get('/podaci_rezervacije', async (req, res) => {
     console.log(results)
 });
 
-app.get('/kartice', async (req, res)=> {
+app.get('/kartice', /*[auth.verify], */ async (req, res)=> {
     let db = await connect()
     let query = req.query;
     let selekcija = {}

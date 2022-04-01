@@ -12,11 +12,14 @@ import jwt from "jsonwebtoken";
 export default {
     async registerUser(userData) {
         let db = await connect();
+        let postedAt = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 
         let doc = {
             korisnicko_ime: userData.korisnicko_ime,
+            ime_prezime: userData.ime_prezime,
             lozinka: await bcrypt.hash(userData.lozinka, 8),
-            grad: userData.grad, 
+            grad: userData.grad,
+            datum_registracije: postedAt
         };
         try {
             let result = await db.collection('users').insertOne(doc);
@@ -44,7 +47,10 @@ export default {
             });
             return {
                 token,
-                korisnicko_ime: user.korisnicko_ime
+                korisnicko_ime: user.korisnicko_ime,
+                ime_prezime: user.ime_prezime,
+                grad: user.grad,
+                datum_registracije: user.datum_registracije,
             }
         }
         else {
@@ -58,8 +64,7 @@ export default {
             let token = authorization[1];
             
             if (type !== "Bearer") {
-                res.status(401).send();
-                return false;
+                return res.status(401).send();
             }
             else {
                 req.jwt = jwt.verify(token, process.env.JWT_SECRET);
