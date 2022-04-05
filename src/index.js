@@ -52,17 +52,17 @@ app.post('/users', async (req, res)=> {
 
 // Za zaprimanje rezervacije parkirnog mjesta sa frontenda
 
-//Podaci vozača
 
-app.post('/osobni_podaci', /*[auth.verify], */ async (req, res) => {
+//Podaci o rezervacijama
+app.post('/rezervacije', /*[auth.verify], */ async (req, res) => {
     let doc = req.body;
     
     // Datum/dan kad je poslan upit na bazu
-    doc.postedAt = new Date().getTime();
+    doc.upit_poslan = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 
     delete doc._id;
 
-    if (!doc.ime_korisnika || !doc.prezime_korisnika || !doc.br_telefona){
+    if (!doc.Ime || !doc.Prezime || !doc.Broj_telefona){
         res.json({
             status: 'fail',
             reason: 'incomplete'
@@ -71,7 +71,7 @@ app.post('/osobni_podaci', /*[auth.verify], */ async (req, res) => {
     };
 
     let db = await connect();
-    let result = await db.collection("osobni_podaci").insertOne(doc)
+    let result = await db.collection("rezervacije").insertOne(doc)
 
     if (result && result.insertedCount == 1){
         res.json(result.ops[0]);
@@ -82,91 +82,13 @@ app.post('/osobni_podaci', /*[auth.verify], */ async (req, res) => {
         })
     };
 });
-
-//Podaci o vozilu
-app.post('/podaci_vozila', /*[auth.verify], */ async (req, res) => {
-    let doc = req.body;
-    
-    // Datum/dan kad je poslan upit na bazu
-    doc.postedAt = new Date().getTime();
-
-    delete doc._id;
-
-    if (!doc.naziv_vozila || !doc.boja_vozila || !doc.registracija){
-        res.json({
-            status: 'fail',
-            reason: 'incomplete'
-        })
-        return;
-    }; 
-
-    let db = await connect();
-    let result = await db.collection("podaci_vozila").insertOne(doc)
-
-    if (result && result.insertedCount == 1){
-        res.json(result.ops[0]);
-    }   
-    else {
-        res.json({
-            status: 'fail',
-        })
-    };
-});
-
-//Podaci o rezervaciji
-app.post('/podaci_rezervacije', /*[auth.verify], */ async (req, res) => {
-    let doc = req.body;
-    
-    // Datum/dan kad je poslan upit na bazu
-    doc.postedAt = new Date().getTime();
-
-    delete doc._id;
-
-    if (!doc.Izabrani_datum || !doc.Vrijeme_boravka || !doc.Koji_parking){
-        res.json({
-            status: 'fail',
-            reason: 'incomplete'
-        })
-        return;
-    } 
-
-    let db = await connect();
-    let result = await db.collection("podaci_rezervacije").insertOne(doc)
-
-    if (result && result.insertedCount == 1){
-        res.json(result.ops[0]);
-    }   
-    else {
-        res.json({
-            status: 'fail',
-        })
-    };
-});
-
 
 // Za listanje svih rezervacija parkirnih mjesta iz administracije.
-
-app.get('/osobni_podaci', /*[auth.verify] ,*/ async (req, res)=> {
+app.get('/rezervacije', /*[auth.verify], */ async (req, res) => {
     let db = await connect()
-    let cursor = await db.collection("osobni_podaci").find()
-    let results = await cursor.toArray()
-  
-    res.json(results)
-    console.log(results)
-});
+    let query = req.query;
 
-app.get('/podaci_vozila', /*[auth.verify],*/ async (req, res) => {
-    let db = await connect()
-    let cursor = await db.collection("podaci_vozila").find()
-    let results = await cursor.toArray()
-  
-    res.json(results)
-    console.log(results)
-});
-
-app.get('/podaci_rezervacije', /*[auth.verify], */ async (req, res) => {
-    let db = await connect()
-    let cursor = await db.collection("podaci_rezervacije").find()
+    let cursor = await db.collection("rezervacije").find()
     let results = await cursor.toArray()
   
     res.json(results)
@@ -190,7 +112,6 @@ app.get('/kartice', /*[auth.verify], */ async (req, res)=> {
     res.json(results)
     console.log(results)
 });
-
 
 app.listen(port, () => console.log(`\n\n[DONE] Backend se vrti na http://localhost:${port}/\n\n`));
 
