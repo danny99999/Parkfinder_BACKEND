@@ -22,8 +22,8 @@ app.get('/', (req, res) => {
    res.json({});
 });
 
-app.get("/tajna", /*[auth.verify], */ (req, res) => {
-    res.json({message: "Ovo je tajna " + req.jwt.korisnicko_ime})
+app.get('/tajna', auth.verify, (req, res) => {
+    res.json({message: "Ovo je tajna " + req.jwt.korisnicko_ime});
 });
 
 app.post('/auth', async (req, res) => {
@@ -84,21 +84,22 @@ app.post('/rezervacije', /*[auth.verify], */ async (req, res) => {
 });
 
 // Za listanje svih rezervacija parkirnih mjesta iz administracije.
-app.get('/rezervacije', /*[auth.verify], */ async (req, res) => {
+app.get('/rezervacije/:email', /*[auth.verify], */ async (req, res) => {
+    let email = req.params.email
     let db = await connect()
-    let query = req.query;
 
-    let cursor = await db.collection("rezervacije").find()
-    let results = await cursor.toArray()
-  
-    res.json(results)
-    console.log(results)
+    let doc = await db.collection("rezervacije").find({Email:email})
+    let result = await doc.toArray();
+    res.json(result)
+    console.log(result)
 });
 
-app.get('/kartice', /*[auth.verify], */ async (req, res)=> {
+//PAZI - baca grešku na auth.verify!
+app.get('/kartice', [auth.verify], async (req, res)=> {
     let db = await connect()
     let query = req.query;
     let selekcija = {}
+    
     var string = query.naslov_b
 
     if (string) {
