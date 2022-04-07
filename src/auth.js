@@ -12,7 +12,13 @@ import jwt from "jsonwebtoken";
 export default {
     async registerUser(userData) {
         let db = await connect();
-        let postedAt = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+    
+        today = mm + '/' + dd + '/' + yyyy;
+        let postedAt = today;
 
         let doc = {
             korisnicko_ime: userData.korisnicko_ime,

@@ -15,14 +15,14 @@ app.use(cors());
 app.use(express.json()); //autom. dekodiranje JSON poruka
 app.get('/', (req, res)=> res.send("Hello World, ovaj put preko browsera!"));
 
-app.get('/', (req, res) => {
+app.get('/', [auth.verify], (req, res) => {
     let naslov = req.query.naslov
     console.log("Pretraga:", naslov)
     
    res.json({});
 });
 
-app.get('/tajna', auth.verify, (req, res) => {
+app.get('/tajna', [auth.verify], (req, res) => {
     res.json({message: "Ovo je tajna " + req.jwt.korisnicko_ime});
 });
 
@@ -54,11 +54,17 @@ app.post('/users', async (req, res)=> {
 
 
 //Podaci o rezervacijama
-app.post('/rezervacije', /*[auth.verify], */ async (req, res) => {
+app.post('/rezervacije', [auth.verify], async (req, res) => {
     let doc = req.body;
     
     // Datum/dan kad je poslan upit na bazu
-    doc.upit_poslan = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = mm + '/' + dd + '/' + yyyy;
+    doc.upit_poslan = today;
 
     delete doc._id;
 
@@ -84,7 +90,7 @@ app.post('/rezervacije', /*[auth.verify], */ async (req, res) => {
 });
 
 // Za listanje svih rezervacija parkirnih mjesta iz administracije.
-app.get('/rezervacije/:email', /*[auth.verify], */ async (req, res) => {
+app.get('/rezervacije/:email', [auth.verify],  async (req, res) => {
     let email = req.params.email
     let db = await connect()
 
