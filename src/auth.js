@@ -63,6 +63,26 @@ export default {
             throw new Error ("Cannot authenticate")
         }
     },
+
+    async changeUserPassword(korisnicko_ime, stara_lozinka, nova_lozinka) {
+        let db = await connect()
+        let user = await db.collection('users').findOne({korisnicko_ime: korisnicko_ime})
+        if(user && user.lozinka && (await bcrypt.compare(stara_lozinka, user.lozinka))) {
+            let nova_lozinka_hashed = await bcrypt.hash(nova_lozinka, 8)
+
+            let result = await db.collection('users').updateOne(
+                {_id: user._id },
+                {
+                    $set: {
+                        lozinka: nova_lozinka_hashed
+                    },
+                }
+                );
+                return result.modifiedCount == 1;
+        }
+
+    },
+
     verify(req, res, next) {
         try {
             let authorization = req.headers.authorization.split(' ');

@@ -8,7 +8,7 @@ import auth from './auth.js';
 
 
 const app = express(); // instanciranje aplikacije
-const port = 3200; // port na kojem će web server slušati
+const port = 3000; // port na kojem će web server slušati
 
 
 app.use(cors());
@@ -35,6 +35,24 @@ app.post('/auth', async (req, res) => {
     }
     catch(e) {
         res.status(403).json({ error: e.message});
+    }
+});
+
+app.patch('/users', [auth.verify], async (req, res) => {
+    let changes = req.body;
+
+    let korisnicko_ime = req.jwt.korisnicko_ime;
+
+    if(changes.nova_lozinka && changes.stara_lozinka) {
+        let result = await auth.changeUserPassword(korisnicko_ime, changes.stara_lozinka, changes.nova_lozinka);
+        if(result) {
+            res.status(201).send();
+        } else {
+            res.status(500).json({error: 'cannot change password'});
+        }
+    }
+    else {
+        res.status(400).json({error: 'krivi upit'});
     }
 });
 
