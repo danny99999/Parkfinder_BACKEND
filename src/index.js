@@ -36,15 +36,15 @@ app.post('/auth', async (req, res) => {
     catch(e) {
         res.status(403).json({ error: e.message});
     }
-});
+}); 
 
 app.patch('/users', [auth.verify], async (req, res) => {
     let changes = req.body;
 
     let korisnicko_ime = req.jwt.korisnicko_ime;
 
-    if(changes.nova_lozinka && changes.stara_lozinka) {
-        let result = await auth.changeUserPassword(korisnicko_ime, changes.stara_lozinka, changes.nova_lozinka);
+    if(changes.noav_lozinka && changes.stara_lozinka) {
+        let result = await auth.changeUserPassword(korisnicko_ime, changes.stara_lozinka, changes.nova_lozinka, datum_mjenjanja);
         if(result) {
             res.status(201).send();
         } else {
@@ -68,10 +68,35 @@ app.post('/users', async (req, res)=> {
     res.json({id: id});
 });
 
+//Obavijesti
+app.post('/obavijesti', [auth.verify], async (req, res) => {
+    let doc = req.body;
+    
+    // Datum/dan kad je poslan upit na bazu
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = mm + '/' + dd + '/' + yyyy;
+    doc.datum_obavijesti = today;
+
+    let db = await connect();
+    let result = await db.collection("obavijesti").insertOne(doc)
+
+    if (result && result.insertedCount == 1){
+        res.json(result.ops[0]);
+    }   
+    else {
+        res.json({
+            status: 'fail',
+        })
+    };
+}); 
+
 // Za zaprimanje rezervacije parkirnog mjesta sa frontenda
 
-
-//Podaci o rezervacijama
+//Slanje podataka o rezervacijama
 app.post('/rezervacije', [auth.verify], async (req, res) => {
     let doc = req.body;
     
@@ -107,6 +132,7 @@ app.post('/rezervacije', [auth.verify], async (req, res) => {
     };
 });
 
+
 // Za listanje svih rezervacija parkirnih mjesta iz administracije.
 app.get('/rezervacije/:email', [auth.verify],  async (req, res) => {
     let email = req.params.email
@@ -118,7 +144,18 @@ app.get('/rezervacije/:email', [auth.verify],  async (req, res) => {
     console.log(result)
 });
 
-//PAZI - baca grešku na auth.verify!
+//
+//Za listanje svih obavijesti
+app.get('/obavijesti', [auth.verify],  async (req, res) => {
+    let db = await connect()
+
+    let doc = await db.collection("obavijesti").find()
+    let result = await doc.toArray();
+    res.json(result)
+    console.log(result)
+});
+
+
 app.get('/kartice', [auth.verify], async (req, res)=> {
     let db = await connect()
     let query = req.query;
