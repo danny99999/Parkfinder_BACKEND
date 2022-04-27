@@ -5,10 +5,18 @@ import express from 'express';
 import cors from 'cors';
 import connect from './db.js'
 import auth from './auth.js';
+import req from 'express/lib/request.js';
+import require from 'requirejs'
+import path from 'path';
+import { fileURLToPath } from 'url';
+import res from 'express/lib/response.js';
 
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const serveStatic = require('serve-static');
 const app = express(); // instanciranje aplikacije
-const port = 3000; // port na kojem će web server slušati
+const port =process.env.PORT || 3000; // port na kojem će web server slušati
 
 
 app.use(cors());
@@ -174,6 +182,19 @@ app.get('/kartice', [auth.verify], async (req, res)=> {
     res.json(results)
     console.log(results)
 });
+
+    app.use(express.static(path.join(__dirname, 'dist')))
+    app.get('/api', (req, res) => {
+        res.json( {
+            message: 'This is the api endpoint'
+        })
+    })
+    app.get('/*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    })
+
+
+
 
 app.listen(port, () => console.log(`\n\n[DONE] Backend se vrti na http://localhost:${port}/\n\n`));
 
