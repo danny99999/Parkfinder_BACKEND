@@ -45,8 +45,8 @@ app.patch('/users', [auth.verify], async (req, res) => {
 
     let korisnicko_ime = req.jwt.korisnicko_ime;
 
-    if(changes.noav_lozinka && changes.stara_lozinka) {
-        let result = await auth.changeUserPassword(korisnicko_ime, changes.stara_lozinka, changes.nova_lozinka, datum_mjenjanja);
+    if(changes.nova_lozinka && changes.stara_lozinka) {
+        let result = await auth.changeUserPassword(korisnicko_ime, changes.stara_lozinka, changes.nova_lozinka);
         if(result) {
             res.status(201).send();
         } else {

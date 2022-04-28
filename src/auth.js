@@ -64,13 +64,7 @@ export default {
         }
     },
 
-    async changeUserPassword(korisnicko_ime, stara_lozinka, nova_lozinka, datum_mjenjanja) {
-        var datum_mjenjanja = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
-    
-        datum_mjenjanja = mm + '/' + dd + '/' + yyyy;
+    async changeUserPassword(korisnicko_ime, stara_lozinka, nova_lozinka) {
 
         let db = await connect()
         let user = await db.collection('users').findOne({korisnicko_ime: korisnicko_ime})
