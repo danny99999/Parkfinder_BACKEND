@@ -24,9 +24,7 @@
     "serve-static": "^1.15.0",
     "vue": "^3.2.31"
   },
-  "engines": {
-    "node": "v6.14.8"
-  },
+
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/node": "^7.16.8",
