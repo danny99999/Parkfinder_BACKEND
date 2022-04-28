@@ -180,5 +180,5 @@ app.get('/kartice', [auth.verify], async (req, res)=> {
 
 
 
-app.listen(port, () => console.log(`\n\n[DONE] Backend se vrti na http://localhost:${port}/\n\n`));
+app.listen(port, () => console.log(`Backend se vrti na ${port}`));
 
