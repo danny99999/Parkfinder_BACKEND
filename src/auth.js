@@ -47,7 +47,7 @@ export default {
 
         if (user && user.lozinka && (await bcrypt.compare(lozinka, user.lozinka))){
             delete user.lozinka
-            let token = jwt.sign(user, "tajna", {
+            let token = jwt.sign(user, process.env.JWT_SECRET, {
                 algorithm: "HS512",
                 expiresIn: "1 week"
             });
@@ -93,7 +93,7 @@ export default {
             if (type !== 'Bearer') {
                 return res.status(401).send();
             } else {
-                req.jwt = jwt.verify(token, "tajna");
+                req.jwt = jwt.verify(token, process.env.JWT_SECRET);
                 return next();
             }
         }   catch (e) {
